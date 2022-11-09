@@ -24,13 +24,13 @@
         <h3>Comentários</h3>
     </header>
     <ul>
-        {% if post.review_set.all %}
-            {% for review in post.review_set.all %}
+        {% if post.comment_set.all %}
+            {% for comment in post.comment_set.all %}
                 <figure>
                     <blockquote>
-                        "{{ review.text }}"
+                        "{{ comment.text }}"
                     </blockquote>
-                    <figcaption>—{{ review.author }}
+                    <figcaption>—{{ comment.author }}
                 </figure>
             {% endfor %}
         {% else %}
