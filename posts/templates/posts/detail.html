@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ post.title }}
+{% endblock title %}
+
+{% block content %}
+
+<section class="dados-de-filme">
+    <img src="{{ post.poster_url }}" alt="Capa do post {{ post.title}}">
+    <ul>
+        <h1>{{ post.title }}</h1>
+        <li>{{ post.date }} </li>
+        <p>{{ post.context }}</p>
+        <li><a href="{% url 'posts:update' post.id %}">Editar</a></li>
+        <li><a href="{% url 'posts:delete' post.id %}">Apagar</a></li>
+    </ul>
+</section>
+
+{% endblock content %}

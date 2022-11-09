@@ -1,0 +1,42 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        {% block title %}{% endblock %}
+    </title>
+    <link href="https://fonts.googleapis.com/css?family=Inter&display=swap" rel="stylesheet" /> 
+    <link rel="stylesheet" type="text/css" href="{% static 'site-style.css' %}"> 
+</head>
+
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="icon-image">
+                <a href="{% url 'index' %}"> <img src="{% static 'icon.png' %}"> </a>
+            </div>
+            <h1>Fuoco's Blog</h1>
+            <ul>
+                <li><a href="{% url 'about' %}">Sobre o autor</a></li>
+                <li><a href="{% url 'posts:index' %}">Posts</a></li>
+            </ul>
+        </nav>
+
+    </header>
+    <main id="conteiner-principal">
+        {% block content %}
+        {% endblock content %}
+    </main>
+    <footer id="rodape-principal">
+        <p>
+            <small>Site por Pedro Pimentel Fuoco 11804313</small>
+        </p>
+    </footer>
+</body>
+
+</html>
