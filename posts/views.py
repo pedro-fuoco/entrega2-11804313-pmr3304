@@ -4,8 +4,8 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from .temp_data import post_data
 from django.shortcuts import render, get_object_or_404
-from .models import Post, Review
-from .forms import PostForm, ReviewForm
+from .models import Post, Comment
+from .forms import PostForm, CommentForm
 from django.views import generic
 from django.utils import timezone
 from django.views.generic.detail import DetailView
