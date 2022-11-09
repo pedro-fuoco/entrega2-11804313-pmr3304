@@ -4,8 +4,8 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from .temp_data import post_data
 from django.shortcuts import render, get_object_or_404
-from .models import Post
-from .forms import PostForm
+from .models import Post, Review
+from .forms import PostForm, ReviewForm
 from django.views import generic
 from django.utils import timezone
 from django.views.generic.detail import DetailView
@@ -41,7 +41,7 @@ class PostDeleteView(generic.DeleteView):
     template_name = 'posts/delete.html'
     def get_success_url(self):
         return reverse('posts:index')
-        
+
 def search_posts(request):
     context = {}
     if request.GET.get('query', False):
@@ -49,3 +49,21 @@ def search_posts(request):
         post_list = Post.objects.filter(title__icontains=search_term)
         context = {"post_list": post_list}
     return render(request, 'posts/search.html', context)
+
+def create_review(request, post_id):
+    post = get_object_or_404(Post, pk=post_id)
+    if request.method == 'POST':
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            review_author = form.cleaned_data['author']
+            review_text = form.cleaned_data['text']
+            review = Review(author=review_author,
+                            text=review_text,
+                            post=post)
+            review.save()
+            return HttpResponseRedirect(
+                reverse('posts:detail', args=(post_id, )))
+    else:
+        form = ReviewForm()
+    context = {'form': form, 'post': post}
+    return render(request, 'posts/review.html', context)
