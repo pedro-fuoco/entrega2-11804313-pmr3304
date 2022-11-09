@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from .temp_data import post_data
 from django.shortcuts import render, get_object_or_404
 from .models import Post
+from .forms import PostForm
 
 
 def list_posts(request):
@@ -27,30 +28,43 @@ def search_posts(request):
 
 def create_post(request):
     if request.method == 'POST':
-        post_title = request.POST['title']
-        post_context = request.POST['context']
-        post_poster_url = request.POST['poster_url']
-        post = Post(title=post_title,
-                      context=post_context,
-                      poster_url=post_poster_url)
-        post.save()
-        return HttpResponseRedirect(
-            reverse('posts:detail', args=(post.id, )))
+        form = PostForm(request.POST)
+        if form.is_valid():
+            post_title = form.cleaned_data['title']
+            post_context = form.cleaned_data['context']
+            post_poster_url = form.cleaned_data['poster_url']
+            post = Post(title=post_title,
+                          context=post_context,
+                          poster_url=post_poster_url)
+            post.save()
+            return HttpResponseRedirect(
+                reverse('posts:detail', args=(post.id, )))
     else:
-        return render(request, 'posts/create.html', {})
+        form = PostForm()
+    context = {'form': form}
+    return render(request, 'posts/create.html', context)
     
 def update_post(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
 
     if request.method == "POST":
-        post.name = request.POST['title']
-        post.context = request.POST['context']
-        post_poster_url = request.POST['poster_url']
-        post.save()
-        return HttpResponseRedirect(
-            reverse('posts:detail', args=(post.id, )))
+        form = PostForm(request.POST)
+        if form.is_valid():
+            post.title = form.cleaned_data['title']
+            post.context = form.cleaned_data['context']
+            post.poster_url = form.cleaned_data['poster_url']
+            post.save()
+            return HttpResponseRedirect(
+                reverse('posts:detail', args=(post.id, )))
+    else:
+        form = PostForm(
+            initial={
+                'title': post.title,
+                'context': post.context,
+                'poster_url': post.poster_url
+            })
 
-    context = {'post': post}
+    context = {'post': post, 'form': form}
     return render(request, 'posts/update.html', context)
 
 def delete_post(request, post_id):
