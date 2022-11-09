@@ -6,18 +6,42 @@ from .temp_data import post_data
 from django.shortcuts import render, get_object_or_404
 from .models import Post
 from .forms import PostForm
+from django.views import generic
+from django.utils import timezone
+from django.views.generic.detail import DetailView
+from django.views.generic.edit import CreateView
+from django.views.generic.edit import UpdateView
 
 
-def list_posts(request):
-    post_list = Post.objects.all()
-    context = {'post_list': post_list}
-    return render(request, 'posts/index.html', context)
+class PostListView(generic.ListView):
+    model = Post
+    template_name = 'posts/index.html'
 
-def detail_post(request, post_id):
-    post = get_object_or_404(Post, pk=post_id)
-    context = {'post': post}
-    return render(request, 'posts/detail.html', context)
+class PostDetailView(generic.DetailView):
+    model = Post
+    template_name = 'posts/detail.html'
 
+class PostCreateView(generic.CreateView):
+    model = Post
+    template_name = 'posts/create.html'
+    fields = ["title", "context", "poster_url"]
+    def get_success_url(self):
+        return reverse('posts:index')
+
+class PostUpdateView(generic.UpdateView):
+    model = Post
+    template_name = 'posts/update.html'
+    fields = ["title", "context", "poster_url"]
+    template_name_suffix = '_update_form'
+    def get_success_url(self):
+        return reverse('posts:index')
+
+class PostDeleteView(generic.DeleteView):
+    model = Post
+    template_name = 'posts/delete.html'
+    def get_success_url(self):
+        return reverse('posts:index')
+        
 def search_posts(request):
     context = {}
     if request.GET.get('query', False):
@@ -25,54 +49,3 @@ def search_posts(request):
         post_list = Post.objects.filter(title__icontains=search_term)
         context = {"post_list": post_list}
     return render(request, 'posts/search.html', context)
-
-def create_post(request):
-    if request.method == 'POST':
-        form = PostForm(request.POST)
-        if form.is_valid():
-            post_title = form.cleaned_data['title']
-            post_context = form.cleaned_data['context']
-            post_poster_url = form.cleaned_data['poster_url']
-            post = Post(title=post_title,
-                          context=post_context,
-                          poster_url=post_poster_url)
-            post.save()
-            return HttpResponseRedirect(
-                reverse('posts:detail', args=(post.id, )))
-    else:
-        form = PostForm()
-    context = {'form': form}
-    return render(request, 'posts/create.html', context)
-    
-def update_post(request, post_id):
-    post = get_object_or_404(Post, pk=post_id)
-
-    if request.method == "POST":
-        form = PostForm(request.POST)
-        if form.is_valid():
-            post.title = form.cleaned_data['title']
-            post.context = form.cleaned_data['context']
-            post.poster_url = form.cleaned_data['poster_url']
-            post.save()
-            return HttpResponseRedirect(
-                reverse('posts:detail', args=(post.id, )))
-    else:
-        form = PostForm(
-            initial={
-                'title': post.title,
-                'context': post.context,
-                'poster_url': post.poster_url
-            })
-
-    context = {'post': post, 'form': form}
-    return render(request, 'posts/update.html', context)
-
-def delete_post(request, post_id):
-    post = get_object_or_404(Post, pk=post_id)
-
-    if request.method == "POST":
-        post.delete()
-        return HttpResponseRedirect(reverse('posts:index'))
-
-    context = {'post': post}
-    return render(request, 'posts/delete.html', context)
