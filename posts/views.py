@@ -1,10 +1,10 @@
 from django.http import HttpResponseRedirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.shortcuts import render
 from django.http import HttpResponse
 from .temp_data import post_data
 from django.shortcuts import render, get_object_or_404
-from .models import Post, Comment
+from .models import Post, Comment, Category
 from .forms import PostForm, CommentForm
 from django.views import generic
 from django.utils import timezone
@@ -67,3 +67,13 @@ def create_comment(request, post_id):
         form = CommentForm()
     context = {'form': form, 'post': post}
     return render(request, 'posts/comment.html', context)
+
+class CategoryListView(generic.ListView):
+    model = Category
+    template_name = 'posts/category.html'
+
+class CategoryCreateView(generic.CreateView):
+    model = Category
+    template_name = 'posts/create_category.html'
+    fields = ['name', 'description', 'posts']
+    success_url = reverse_lazy('posts:categories')

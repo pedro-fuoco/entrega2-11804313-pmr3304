@@ -12,6 +12,9 @@
         <h1>{{ post.title }}</h1>
         <li>{{ post.date }} </li>
         <p>{{ post.context }}</p>
+        {% if post.category_set.all %}
+            <li>Incluso nas categorias: {{ post.category_set.all|join:", " }} </li>
+        {% endif %}
         <li><a href="{% url 'posts:update' post.id %}">Editar</a></li>
         <li><a href="{% url 'posts:delete' post.id %}">Apagar</a></li>
     </ul>
