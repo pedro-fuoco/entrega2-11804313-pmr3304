@@ -25,5 +25,5 @@ class CommentForm(ModelForm):
         ]
         labels = {
             'author': 'Usuário',
-            'text': 'Resenha',
+            'text': 'Comentário',
         }
