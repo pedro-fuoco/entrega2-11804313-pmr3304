@@ -16,9 +16,9 @@ class PostForm(ModelForm):
             'poster_url': 'URL do Poster',
         }
 
-class ReviewForm(ModelForm):
+class CommentForm(ModelForm):
     class Meta:
-        model = Review
+        model = Comment
         fields = [
             'author',
             'text',

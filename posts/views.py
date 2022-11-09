@@ -50,20 +50,20 @@ def search_posts(request):
         context = {"post_list": post_list}
     return render(request, 'posts/search.html', context)
 
-def create_review(request, post_id):
+def create_comment(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
     if request.method == 'POST':
-        form = ReviewForm(request.POST)
+        form = CommentForm(request.POST)
         if form.is_valid():
-            review_author = form.cleaned_data['author']
-            review_text = form.cleaned_data['text']
-            review = Review(author=review_author,
-                            text=review_text,
+            comment_author = form.cleaned_data['author']
+            comment_text = form.cleaned_data['text']
+            comment = Comment(author=comment_author,
+                            text=comment_text,
                             post=post)
-            review.save()
+            comment.save()
             return HttpResponseRedirect(
                 reverse('posts:detail', args=(post_id, )))
     else:
-        form = ReviewForm()
+        form = CommentForm()
     context = {'form': form, 'post': post}
-    return render(request, 'posts/review.html', context)
+    return render(request, 'posts/comment.html', context)
